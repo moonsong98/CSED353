@@ -7,7 +7,7 @@ My POVIS ID: moonsong98
 
 My student ID (numeric): 20180423
 
-This assignment took me about [n] hours to do (including the time on studying, designing, and writing the code).
+This assignment took me about [18] hours to do (including the time on studying, designing, and writing the code).
 
 My secret code from section 2.1 was: 761e8a7f20
 
@@ -15,6 +15,6 @@ My secret code from section 2.1 was: 761e8a7f20
 
 - Optional: I think you could make this lab better by: [describe]
 
-- Optional: I was surprised by: [describe]
+- Optional: I was surprised by: I could find myself learning deeply through completing assingment.
 
 - Optional: I'm not sure about: [describe]
