@@ -11,6 +11,12 @@
 class ByteStream {
   private:
     // Your code here -- add private members as necessary.
+    bool isInputEnded = false;
+    std::string buffer;
+    const size_t capacity;
+    unsigned int eofLoc = 0;
+    unsigned int bytesRead = 0;
+    unsigned int bytesWritten = 0;
 
     // Hint: This doesn't need to be a sophisticated data structure at
     // all, but if any of your tests are taking longer than a second,
@@ -21,7 +27,7 @@ class ByteStream {
 
   public:
     //! Construct a stream with room for `capacity` bytes.
-    ByteStream(const size_t capacity);
+    ByteStream(const size_t _capacity);
 
     //! \name "Input" interface for the writer
     //!@{
