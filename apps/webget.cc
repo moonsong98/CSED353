@@ -19,20 +19,17 @@ void get_URL(const string &host, const string &path) {
      * the "eof" (end of file).
      * */
 
-    // Create a TCP socket to connect
+    // Create a TCP socket and connect to given host with http port(80)
     TCPSocket sock;
     sock.connect(Address(host, "http"));
 
-    // Create message which needs to be sent to server
-    string message = "";
-    message += "GET " + path + " HTTP/1.1\r\n";
-    message += "Host: " + host + "\r\n";
-    message += "Connection: close\r\n\r\n";
+    // Create message which needs to be sent to host
+    const string message = "GET " + path + " HTTP/1.1\r\n" + "Host: " + host + "\r\n" + "Connection: close\r\n\r\n";
 
-    // Send message to the server
+    // Send message to the host
     sock.write(message);
 
-    // Print the message recieved from the server until eof
+    // Print the message recieved from the host until eof
     while (!sock.eof())
         cout << sock.read();
 
