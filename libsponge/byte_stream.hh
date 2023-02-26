@@ -8,15 +8,26 @@
 //! Bytes are written on the "input" side and read from the "output"
 //! side.  The byte stream is finite: the writer can end the input,
 //! and then no more bytes can be written.
+
+/**
+ * When constructor is called, buffer would be created by given capacity.
+ * As bytes are written, we move end of buffer location and append written bytes at the end of the buffer.
+ * When bytes are read, we move end of buffer location and pop read bytes at the front of the buffer.
+ * */
 class ByteStream {
   private:
-    // Your code here -- add private members as necessary.
-    bool isInputEnded = false;
-    std::string buffer;
+    // Size of the buffer
     const size_t capacity;
-    unsigned int eofLoc = 0;
+    // Buffer that contains bytes written
+    std::string buffer;
+    // Indicates the end of buffer location
+    unsigned int endOfBuffer = 0;
+    // Counts total bytes read
     unsigned int bytesRead = 0;
+    // Counts total bytes written
     unsigned int bytesWritten = 0;
+    // Status which tells whether input is ended or not
+    bool isInputEnded = false;
 
     // Hint: This doesn't need to be a sophisticated data structure at
     // all, but if any of your tests are taking longer than a second,

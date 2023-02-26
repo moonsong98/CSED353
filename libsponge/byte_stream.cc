@@ -1,7 +1,5 @@
 #include "byte_stream.hh"
 
-// Dummy implementation of a flow-controlled in-memory byte stream.
-
 // For Lab 0, please replace with a real implementation that passes the
 // automated checks run by `make check_lab0`.
 
@@ -9,16 +7,14 @@
 
 using namespace std;
 
-ByteStream::ByteStream(const size_t _capacity):buffer(string(_capacity, ' ')), capacity(_capacity) {}
+ByteStream::ByteStream(const size_t _capacity) : capacity(_capacity), buffer(string(_capacity, ' ')) {}
 
 size_t ByteStream::write(const string &data) {
-    //isInputEnded = false;
     size_t writeSize = min(data.length(), remaining_capacity());
-    for(unsigned int i = 0; i < writeSize; ++i)
-        buffer[eofLoc++] = data[i];
-    //end_input();
+    for (unsigned int i = 0; i < writeSize; ++i)
+        buffer[endOfBuffer++] = data[i];
     bytesWritten += writeSize;
-        
+
     return writeSize;
 }
 
@@ -26,14 +22,14 @@ size_t ByteStream::write(const string &data) {
 string ByteStream::peek_output(const size_t len) const { return buffer.substr(0, len); }
 
 //! \param[in] len bytes will be removed from the output side of the buffer
-void ByteStream::pop_output(const size_t len) { 
-    if(len > eofLoc) {
+void ByteStream::pop_output(const size_t len) {
+    if (len > endOfBuffer) {
         _error = true;
         return;
     }
-    for(unsigned int i = len; i < eofLoc; ++i)
-        buffer[i-len] = buffer[i]; 
-    eofLoc -= len;
+    for (unsigned int i = len; i < endOfBuffer; ++i)
+        buffer[i - len] = buffer[i];
+    endOfBuffer -= len;
     bytesRead += len;
 }
 
@@ -41,7 +37,7 @@ void ByteStream::pop_output(const size_t len) {
 //! \param[in] len bytes will be popped and returned
 //! \returns a string
 std::string ByteStream::read(const size_t len) {
-    if(len > eofLoc) {
+    if (len > endOfBuffer) {
         _error = true;
         return "";
     }
@@ -50,15 +46,13 @@ std::string ByteStream::read(const size_t len) {
     return readStr;
 }
 
-void ByteStream::end_input() {
-    isInputEnded = true;
-}
+void ByteStream::end_input() { isInputEnded = true; }
 
 bool ByteStream::input_ended() const { return isInputEnded; }
 
-size_t ByteStream::buffer_size() const { return eofLoc; }
+size_t ByteStream::buffer_size() const { return endOfBuffer; }
 
-bool ByteStream::buffer_empty() const { return eofLoc==0; }
+bool ByteStream::buffer_empty() const { return endOfBuffer == 0; }
 
 bool ByteStream::eof() const { return isInputEnded && buffer_empty(); }
 
@@ -66,4 +60,4 @@ size_t ByteStream::bytes_written() const { return bytesWritten; }
 
 size_t ByteStream::bytes_read() const { return bytesRead; }
 
-size_t ByteStream::remaining_capacity() const { return capacity - eofLoc; }
+size_t ByteStream::remaining_capacity() const { return capacity - endOfBuffer; }
