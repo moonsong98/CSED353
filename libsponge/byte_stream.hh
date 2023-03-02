@@ -17,7 +17,7 @@
 class ByteStream {
   private:
     // Size of the buffer
-    const size_t capacity;
+    const size_t _capacity;
     // Buffer that contains bytes written
     std::string buffer;
     // Indicates the end of buffer location
@@ -38,7 +38,7 @@ class ByteStream {
 
   public:
     //! Construct a stream with room for `capacity` bytes.
-    ByteStream(const size_t _capacity);
+    ByteStream(const size_t capacity);
 
     //! \name "Input" interface for the writer
     //!@{

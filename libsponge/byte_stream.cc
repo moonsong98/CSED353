@@ -7,7 +7,7 @@
 
 using namespace std;
 
-ByteStream::ByteStream(const size_t _capacity) : capacity(_capacity), buffer(string(_capacity, ' ')) {}
+ByteStream::ByteStream(const size_t capacity) : _capacity(capacity), buffer(string(capacity, ' ')) {}
 
 size_t ByteStream::write(const string &data) {
     size_t writeSize = min(data.length(), remaining_capacity());
@@ -60,4 +60,4 @@ size_t ByteStream::bytes_written() const { return bytesWritten; }
 
 size_t ByteStream::bytes_read() const { return bytesRead; }
 
-size_t ByteStream::remaining_capacity() const { return capacity - endOfBuffer; }
+size_t ByteStream::remaining_capacity() const { return _capacity - endOfBuffer; }
