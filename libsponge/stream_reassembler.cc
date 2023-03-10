@@ -18,7 +18,7 @@ StreamReassembler::StreamReassembler(const size_t capacity) : _output(capacity),
 //! possibly out-of-order, from the logical stream, and assembles any newly
 //! contiguous substrings and writes them into the output stream in order.
 void StreamReassembler::push_substring(const string &data, const size_t index, const bool eof) {
-    //cout << "Currently written bites: " << _num_written_bytes << '\n';
+    cout << "Currently written bites: " << _num_written_bytes << '\n';
     size_t l_index = index, r_index = index + data.length();
     create_segment(l_index, r_index, data, eof);
     write_segment();
@@ -49,7 +49,8 @@ void StreamReassembler::write_segment() {
             _output.write(it->second.data.substr(0, remaining_capacity));
             it->second.left_index += remaining_capacity;
             it->second.data = it->second.data.substr(remaining_capacity);
-            _num_written_bytes -= remaining_capacity;
+            _num_written_bytes += remaining_capacity;
+            _num_unassembled_bytes -= remaining_capacity;
             break;
         }
         else break;
