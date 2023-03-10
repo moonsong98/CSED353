@@ -3,7 +3,10 @@
 
 #include "byte_stream.hh"
 
+#include <algorithm>
 #include <cstdint>
+#include <iostream>
+#include <map>
 #include <string>
 
 //! \brief A class that assembles a series of excerpts from a byte stream (possibly out of order,
@@ -11,9 +14,24 @@
 class StreamReassembler {
   private:
     // Your code here -- add private members as necessary.
-
     ByteStream _output;  //!< The reassembled in-order byte stream
     size_t _capacity;    //!< The maximum number of bytes
+
+    // Additional Private Nested Struct
+    struct Segment {
+        size_t left_index;
+        std::string data;
+        bool isEOF;
+    };
+    // Additional Private Members
+    std::map<size_t, Segment> _unassembled_segments = std::map<size_t, Segment>();
+    size_t _last_assembled_index = -1;
+    size_t _num_unassembled_bytes = 0;
+    size_t _num_written_bytes = 0;
+    size_t _num_file_bytes = 0;
+    bool _recieved_EOF = false;
+    void create_segment(size_t l_index, size_t r_index, std::string msg, bool eof);
+    void write_segment();
 
   public:
     //! \brief Construct a `StreamReassembler` that will store up to `capacity` bytes.
