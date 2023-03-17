@@ -1,14 +1,9 @@
 #include "wrapping_integers.hh"
 
-#include <iostream>
-
 // Dummy implementation of a 32-bit wrapping integer
 
 // For Lab 2, please replace with a real implementation that passes the
 // automated checks run by `make check_lab2`.
-
-template <typename... Targs>
-void DUMMY_CODE(Targs &&... /* unused */) {}
 
 using namespace std;
 
