@@ -65,9 +65,9 @@ class StreamReassembler {
     //! \returns `true` if no substrings are waiting to be assembled
     bool empty() const;
 
-    size_t num_written_bytes() const {return _num_written_bytes;}
+    size_t num_written_bytes() const { return _num_written_bytes; }
 
-    size_t remaining_capacity() const {return _output.remaining_capacity();}
+    size_t remaining_capacity() const { return _output.remaining_capacity(); }
 };
 
 #endif  // SPONGE_LIBSPONGE_STREAM_REASSEMBLER_HH

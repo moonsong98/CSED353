@@ -24,7 +24,7 @@ class TCPReceiver {
     WrappingInt32 isn;
     bool recievedSYN = false;
     bool recievedFIN = false;
-    
+
   public:
     //! \brief Construct a TCP receiver
     //!
