@@ -23,10 +23,6 @@ string ByteStream::peek_output(const size_t len) const { return buffer.substr(0,
 
 //! \param[in] len bytes will be removed from the output side of the buffer
 void ByteStream::pop_output(const size_t len) {
-    if (len > endOfBuffer) {
-        _error = true;
-        return;
-    }
     for (unsigned int i = len; i < endOfBuffer; ++i)
         buffer[i - len] = buffer[i];
     endOfBuffer -= len;
@@ -37,12 +33,9 @@ void ByteStream::pop_output(const size_t len) {
 //! \param[in] len bytes will be popped and returned
 //! \returns a string
 std::string ByteStream::read(const size_t len) {
-    if (len > endOfBuffer) {
-        _error = true;
-        return "";
-    }
-    string readStr = peek_output(len);
-    pop_output(len);
+    size_t read_len = len < endOfBuffer ? endOfBuffer : endOfBuffer;
+    string readStr = peek_output(read_len);
+    pop_output(read_len);
     return readStr;
 }
 
