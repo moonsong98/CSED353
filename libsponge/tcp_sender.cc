@@ -40,14 +40,14 @@ void TCPSender::fill_window() {
 
     while (n_bytes_can_send > 0 && !_fin) {
         // Buffer is empty, do not create a new segment
-        if(!_stream.eof() && _stream.buffer_empty())
+        if (!_stream.eof() && _stream.buffer_empty())
             return;
 
         TCPSegment new_segment;
 
         // Payload size shouldn't exceed maximum payload size
         size_t payload_size = n_bytes_can_send;
-        if(payload_size > TCPConfig::MAX_PAYLOAD_SIZE)
+        if (payload_size > TCPConfig::MAX_PAYLOAD_SIZE)
             payload_size = TCPConfig::MAX_PAYLOAD_SIZE;
 
         // Read from the buffer, and put paylod into the segment
@@ -71,7 +71,7 @@ void TCPSender::fill_window() {
 void TCPSender::ack_received(const WrappingInt32 ackno, const uint16_t window_size) {
     const uint64_t abs_ackno = unwrap(ackno, _isn, _checkpoint);
     _rwnd = window_size;
-    /* 
+    /*
      * Check validity of ackno
      * 1. If it's greater than next_seqno, it hasn't been sent yet.
      * 2. If it's less than checkpoint, it already have been acknowledged.
