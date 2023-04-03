@@ -35,6 +35,12 @@ class TCPSender {
     /*
      * Manually Added
      * */
+
+    /*
+     * OrderedSegment contains absolute sequence number of such segment and the segment
+     * Segments in flight are contained in priority queue of which key is a absolute sequnece number
+     * A segment with a lower key goes to the front
+     * */
     struct OrderedSegment {
         OrderedSegment(const size_t abs_seqno, const TCPSegment seg);
         size_t _abs_seqno;
@@ -43,17 +49,36 @@ class TCPSender {
     struct comp {
         bool operator()(const OrderedSegment &a, const OrderedSegment &b) { return a._abs_seqno > b._abs_seqno; }
     };
-    bool _syn{false};
-    bool _fin{false};
-    bool _is_syn_acked{false};
-    bool _is_timer_running{false};
-    size_t _time_spent{0};
-    size_t _rwnd{1};
-    uint64_t _bytes_in_flight{0};
-    uint64_t _checkpoint{0};
-    unsigned int _n_consecutive_retransmissions{0};
-    unsigned int _rto{0};
     std::priority_queue<OrderedSegment, std::vector<OrderedSegment>, comp> _segments_in_flight{};
+
+    //! Is syn segment sent
+    bool _syn{false};
+
+    //! Is fin segment sent
+    bool _fin{false};
+
+    //! Is timer running
+    bool _is_timer_running{false};
+
+    //! How many time spent since the timer runs
+    size_t _time_spent{0};
+
+    //! Window size of the receiver
+    size_t _rwnd{1};
+
+    //! Number of bytes in flight
+    uint64_t _bytes_in_flight{0};
+
+    //! Recent Ackno, which is also being used as a checkpoint when unwrap
+    uint64_t _checkpoint{0};
+
+    //! Number of consecutive retransmissions
+    unsigned int _n_consecutive_retransmissions{0};
+
+    //! Retransmission time
+    unsigned int _rto{0};
+
+    //! Method to send a segment
     void _send_segment(TCPSegment new_segment);
 
   public:
