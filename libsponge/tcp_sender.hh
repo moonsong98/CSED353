@@ -32,6 +32,30 @@ class TCPSender {
     //! the (absolute) sequence number for the next byte to be sent
     uint64_t _next_seqno{0};
 
+    /*
+     * Manually Added
+     * */
+    struct OrderedSegment {
+        OrderedSegment(const size_t abs_seqno, const TCPSegment seg);
+        size_t _abs_seqno;
+        TCPSegment _seg;
+    };
+    struct comp {
+        bool operator()(const OrderedSegment &a, const OrderedSegment &b) { return a._abs_seqno > b._abs_seqno; }
+    };
+    bool _syn{false};
+    bool _fin{false};
+    bool _is_syn_acked{false};
+    bool _is_timer_running{false};
+    size_t _time_spent{0};
+    size_t _rwnd{1};
+    uint64_t _bytes_in_flight{0};
+    uint64_t _checkpoint{0};
+    unsigned int _n_consecutive_retransmissions{0};
+    unsigned int _rto{0};
+    std::priority_queue<OrderedSegment, std::vector<OrderedSegment>, comp> _segments_in_flight{};
+    void _send_segment(TCPSegment new_segment);
+
   public:
     //! Initialize a TCPSender
     TCPSender(const size_t capacity = TCPConfig::DEFAULT_CAPACITY,
