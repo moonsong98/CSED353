@@ -13,6 +13,8 @@ StreamReassembler::StreamReassembler(const size_t capacity) : _output(capacity),
 //! possibly out-of-order, from the logical stream, and assembles any newly
 //! contiguous substrings and writes them into the output stream in order.
 void StreamReassembler::push_substring(const string &data, const size_t index, const bool eof) {
+    if(_num_written_bytes + _capacity <= index)
+        return;
     size_t l_index = index, r_index = index + data.length();
     create_segment(l_index, r_index, data, eof);
     write_segment();
