@@ -21,8 +21,6 @@ size_t TCPConnection::unassembled_bytes() const { return _receiver.unassembled_b
 size_t TCPConnection::time_since_last_segment_received() const { return _time_since_last_segment_received; }
 
 void TCPConnection::segment_received(const TCPSegment &seg) {
-    if(not _is_active) return;
-
     _time_since_last_segment_received = 0;
 
     if (seg.header().rst) {
@@ -30,19 +28,16 @@ void TCPConnection::segment_received(const TCPSegment &seg) {
         return;
     }
 
-    if(!_sent_SYN && seg.header().ack)
+    if (!_sent_SYN && seg.header().ack)
         return;
 
     _receiver.segment_received(seg);
 
-    if(seg.header().ack)
+    if (seg.header().ack)
         _sender.ack_received(seg.header().ackno, seg.header().win);
 
-    if((seg.header().syn and _sent_SYN) 
-        or seg.header().fin 
-        or seg.payload().str().length()) {
+    if ((seg.header().syn and _sent_SYN) or seg.header().fin or seg.payload().str().length())
         _sender.send_empty_segment();
-    }
 
     _send_segments(false);
 }
@@ -69,7 +64,7 @@ void TCPConnection::tick(const size_t ms_since_last_tick) {
         _send_segments(false);
 }
 
-void TCPConnection::end_input_stream() { 
+void TCPConnection::end_input_stream() {
     _sender.stream_in().end_input();
     _send_segments(false);
 }
@@ -80,25 +75,23 @@ void TCPConnection::connect() {
     _send_segments(false);
 }
 
-
 void TCPConnection::_send_segments(bool set_rst) {
     _sender.fill_window();
-    if(not _sent_SYN)
+    if (not _sent_SYN)
         _sent_SYN = true;
 
-    while(not _sender.segments_out().empty()) {
+    while (not _sender.segments_out().empty()) {
         TCPSegment seg_out = _sender.segments_out().front();
         _sender.segments_out().pop();
 
-        if(_receiver.ackno().has_value()) {
+        if (_receiver.ackno().has_value()) {
             seg_out.header().ack = true;
             seg_out.header().ackno = _receiver.ackno().value();
         }
         seg_out.header().win = _receiver.window_size();
 
-        if(set_rst and _sender.segments_out().empty()) {
+        if (set_rst and _sender.segments_out().empty())
             seg_out.header().rst = true;
-        }
 
         _segments_out.push(seg_out);
     }
@@ -114,22 +107,24 @@ void TCPConnection::_kill_connection() {
 void TCPConnection::_unclean_shutdown() {
     _kill_connection();
 
-    if(_sender.segments_out().empty())
+    if (_sender.segments_out().empty())
         _sender.send_empty_segment();
+
     _send_segments(true);
 }
 
 void TCPConnection::_clean_shutdown() {
-    // If the inbound stream ends before the TCPConnection has reached EOF on its outbound stream, this variable needs to be set to false.
-    if(_receiver.stream_out().input_ended() and not _sender.stream_in().eof()) {
+    // If the inbound stream ends before the TCPConnection has reached EOF on its outbound stream, this variable needs
+    // to be set to false.
+    if (_receiver.stream_out().input_ended() and not _sender.stream_in().eof()) {
         _linger_after_streams_finish = false;
     }
 
-    if(_receiver.stream_out().input_ended() and _receiver.unassembled_bytes() == 0 // Prereq #1
-        and _sender.stream_in().input_ended() // Prereq #2
-        and _sender.bytes_in_flight() == 0 // Prereq #3
-    ){
-        if(not _linger_after_streams_finish or time_since_last_segment_received() >= 10 * _cfg.rt_timeout) {
+    if (_receiver.stream_out().input_ended() and _receiver.unassembled_bytes() == 0  // Prereq #1
+        and _sender.stream_in().input_ended()                                        // Prereq #2
+        and _sender.bytes_in_flight() == 0                                           // Prereq #3
+    ) {
+        if (not _linger_after_streams_finish or time_since_last_segment_received() >= 10 * _cfg.rt_timeout) {
             _is_active = false;
         }
     }
