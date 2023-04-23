@@ -68,9 +68,7 @@ void TCPConnection::end_input_stream() {
     _send_segments(false);
 }
 
-void TCPConnection::connect() {
-    _send_segments(false);
-}
+void TCPConnection::connect() { _send_segments(false); }
 
 void TCPConnection::_send_segments(bool set_rst) {
     _sender.fill_window();
