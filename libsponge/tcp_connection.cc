@@ -46,7 +46,6 @@ bool TCPConnection::active() const { return _is_active; }
 
 size_t TCPConnection::write(const string &data) {
     size_t n_bytes_written = _sender.stream_in().write(data);
-    _sender.fill_window();
     _send_segments(false);
     return n_bytes_written;
 }
@@ -70,8 +69,6 @@ void TCPConnection::end_input_stream() {
 }
 
 void TCPConnection::connect() {
-    _sender.fill_window();
-    _sent_SYN = true;
     _send_segments(false);
 }
 
