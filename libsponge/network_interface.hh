@@ -7,6 +7,7 @@
 
 #include <optional>
 #include <queue>
+#include <map>
 
 //! \brief A "network interface" that connects IP (the internet layer, or network layer)
 //! with Ethernet (the network access layer, or link layer).
@@ -39,6 +40,28 @@ class NetworkInterface {
 
     //! outbound queue of Ethernet frames that the NetworkInterface wants sent
     std::queue<EthernetFrame> _frames_out{};
+
+    // amount of time passed
+    size_t _time_passed{0};
+
+    // mapping key: IP address, value: Ethernet address
+    std::map<uint32_t, std::pair<EthernetAddress, size_t>> _ip2eth{};
+
+    // mapping key: IP address, value: time
+    std::map<uint32_t, size_t> _not_mapped_ip_address{};
+
+    // mapping key: IP address, value: {payload, time}
+    std::map<uint32_t, std::vector<BufferList>> _not_sent_dgrams{};
+
+    // send a frame using given destination address and payload
+    void _send_IP_v4_frame(const EthernetAddress& dst_addr, const BufferList& payload);
+
+    void _map_ethernet_address(const uint32_t& ip_addr, const EthernetAddress& eth_addr);
+    
+    // Create ARP Message ot know MAC Addreess corresponding to given ip_addr
+    void _send_ARP_request(const uint32_t target_addr);
+
+    void _send_ARP_reply(const uint32_t target_ip_addr, const EthernetAddress& target_eth_addr);
 
   public:
     //! \brief Construct a network interface with given Ethernet (network-access-layer) and IP (internet-layer) addresses
